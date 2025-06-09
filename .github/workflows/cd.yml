@@ -55,7 +55,7 @@ jobs:
 
       - name: Upload docker-compose.yml, .env to EC2
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > snapticketKey.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" | base64 -d > snapticketKey.pem
           chmod 600 snapticketKey.pem
           scp -o StrictHostKeyChecking=no -i snapticketKey.pem docker-compose/docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:~/snap-ticket/docker-compose.yml
           scp -o StrictHostKeyChecking=no -i snapticketKey.pem .env ubuntu@${{ secrets.EC2_HOST }}:~/snap-ticket/.env
