@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - .env
+      - /snap-ticket/.env
     environment:
       - TZ=Asia/Seoul
     volumes:
