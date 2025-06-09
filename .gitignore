@@ -36,3 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 /dev.env
+/src/main/resources/application.yml
