@@ -53,33 +53,20 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "TAG=latest" >> .env
 
-      - name: Upload docker-compose.yml and .env to EC2
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose.yml,.env"
-          target: "/home/ubuntu/snap-ticket"
-
-      - name: Upload application.yml on EC2
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            mkdir -p /home/ubuntu/snap-ticket/config
-            echo "${{ secrets.APPLICATION_YML }}" > /home/ubuntu/snap-ticket/config/application.yml
+      - name: Upload docker-compose.yml, .env to EC2
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > snapticketKey.pem
+          chmod 600 snapticketKey.pem
+          scp -o StrictHostKeyChecking=no -i snapticketKey.pem docker-compose/docker-compose.yml ubuntu@${{ secrets.EC2_HOST }}:~/snap-ticket/docker-compose.yml
+          scp -o StrictHostKeyChecking=no -i snapticketKey.pem .env ubuntu@${{ secrets.EC2_HOST }}:~/snap-ticket/.env
 
       - name: Run docker-compose on EC2
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /home/ubuntu/snap-ticket
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d
+        run: |
+          ssh -o StrictHostKeyChecking=no -i snapticketKey.pem ubuntu@${{ secrets.EC2_HOST }} <<EOF
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+          cd /home/ubuntu/snap-ticket
+          docker-compose down || true
+          docker-compose pull
+          docker-compose up -d
+          EOF
+          rm snapticketKey.pem
