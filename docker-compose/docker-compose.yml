@@ -5,7 +5,7 @@ services:
     image: ${DOCKER_USERNAME}/snap-ticket:${TAG}
     container_name: snap-ticket
     ports:
-      - "8080:8080"
+      - "80:8080"
     env_file:
       - .env
     environment:
@@ -13,4 +13,3 @@ services:
     volumes:
       - /home/ubuntu/logs:/home/logs  # 로그 파일 저장 디렉토리
     restart: always
-    
