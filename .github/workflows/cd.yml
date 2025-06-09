@@ -51,7 +51,8 @@ jobs:
           echo "DB_URL=${{ secrets.DB_URL }}" > .env
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "TAG=latest" >> .env
+          echo "TAG=${{ github.sha }}" >> .env
+          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
 
       - name: Upload docker-compose.yml, .env to EC2
         run: |
