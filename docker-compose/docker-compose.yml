@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: ${DOCKER_USERNAME}/snap-ticket:latest
+    image: ${DOCKER_USERNAME}/snap-ticket:${TAG}
     container_name: snap-ticket
     ports:
       - "8080:8080"
