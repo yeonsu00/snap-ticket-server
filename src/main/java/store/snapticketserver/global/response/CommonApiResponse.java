@@ -8,7 +8,7 @@ import lombok.Getter;
 import store.snapticketserver.global.response.code.ResponseCode;
 
 @Getter
-public class ApiResponse<T> {
+public class CommonApiResponse<T> {
 
     @JsonProperty("code")
     @Schema(description = "응답 코드", example = "SUCCESS")
@@ -24,22 +24,22 @@ public class ApiResponse<T> {
     private final T data;
 
     @Builder
-    private ApiResponse(String code, String message, T data) {
+    private CommonApiResponse(String code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
     }
 
-    public static <T> ApiResponse<T> success(T data) {
-        return ApiResponse.<T>builder()
+    public static <T> CommonApiResponse<T> success(T data) {
+        return CommonApiResponse.<T>builder()
                 .code(ResponseCode.OK.getCode())
                 .message(ResponseCode.OK.getMessage())
                 .data(data)
                 .build();
     }
 
-    public static <T> ApiResponse<T> failure(ResponseCode code) {
-        return ApiResponse.<T>builder()
+    public static <T> CommonApiResponse<T> failure(ResponseCode code) {
+        return CommonApiResponse.<T>builder()
                 .code(code.getCode())
                 .message(code.getMessage())
                 .data(null)
